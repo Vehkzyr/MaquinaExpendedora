@@ -1,4 +1,4 @@
-
+import time
 
 #Definimos la funcion main, la cual sera el tornco del programa
 def main():
@@ -12,6 +12,9 @@ def main():
 
     estadosFinales = maquinaEstados(entrada, automata)
 
+    #Introducimos una espera de un segundo
+    time.sleep(1)
+    
     print(f'Productos devueltos: {estadosFinales}')
 
 def cargarAutomata(nombreArchivo):
@@ -146,6 +149,9 @@ def maquinaEstados (entrada, automata):
         else:
             #Si solo hay un estado lo actualizamos
             estadoActual = estadoSiguiente
+
+        #Introducimos una espera de un segundo
+        time.sleep(1)
 
     return estadosFinales
 
