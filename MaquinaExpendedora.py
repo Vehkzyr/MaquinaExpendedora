@@ -12,7 +12,7 @@ def main():
 
     estadosFinales = maquinaEstados(entrada, automata)
 
-    print(f'Estados finales alacanzados: {estadosFinales}')
+    print(f'Productos devueltos: {estadosFinales}')
 
 def cargarAutomata(nombreArchivo):
     """
@@ -119,7 +119,11 @@ def maquinaEstados (entrada, automata):
             print(f"ERROR: No hay transición desde {estadoActual} con {caracter}")
             break
 
+        # Dividimos el estado siguiente en un array auxiliar para mostrar el saldo
+        auxSiguiente = [char for char in estadoSiguiente]
+
         print(f'Caracter introducido: {caracter}, Estado Actual: {estadoActual}, Estado Siguiente: {estadoSiguiente}')
+        print(f'    Saldo Actualizado: {auxSiguiente[1]}.{auxSiguiente[2]}')
 
         #Si el estado siguiente tiene un espacio significa que es doble y contiene un estado final
         #por ejemplo si estamos en el estado q35 y le entra una a transicionamos al estado q30 y nos devuelve qaa 'q30 qaa'
@@ -131,9 +135,10 @@ def maquinaEstados (entrada, automata):
             estadoNoFinal = estados[0]
             estadoFinal = estados[1]
 
-            if estadoFinal not in estadosFinales:
-                estadosFinales.append(estadoFinal)
-                print(f"Devolviendo {estadoFinal}")
+            # Dividimos el estado siguiente en un array auxiliar para mostrar el producto devuelto
+            auxFinal = [char for char in estadoFinal]
+            estadosFinales.append(auxFinal[1].upper()) #Con upper convertimos las minusculas en mayusculas para obtener el producto deseado
+            print(f"    Devolviendo {auxFinal[1].upper()}")
 
             # El estado actual se actualiza al estado que no es final
             estadoActual = estadoNoFinal
