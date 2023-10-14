@@ -1,4 +1,4 @@
-# Maquina Expendedora a Partir de un automata de estados
+# Maquina expendedora a partir de un automata de estados
 
 Este proyecto consiste en la creacion de una maquina de estados para aplicar su funcionamiento a una maquina expendedora la cual tendra tres productos:
 
