@@ -1,21 +1,18 @@
-import time
 
-#Definimos la funcion main, la cual sera el tornco del programa
+#Definimos la funcion main, la cual sera el tronco del programa
 def main():
     #!!!!! SI SE CAMBIA EL NOMBRE DEL ARCHIVO HA DE CAMBIARSE AQUI PARA QUE EL PROGRAMA FUNCIONE !!!!!
     archivo = ('archivo.txt')
 
     #Llamamos a la funcion cargarAutomata para meter el automata en un diccionario
     automata = cargarAutomata(archivo)
+    print(automata)
 
     entrada = input("Introduzca la cadena de entrada: ")
 
     estadosFinales = maquinaEstados(entrada, automata)
 
-    #Introducimos una espera de un segundo
-    time.sleep(1)
-    
-    print(f'Productos devueltos: {estadosFinales}')
+    print(f'\nProductos devueltos: {estadosFinales}')
 
 def cargarAutomata(nombreArchivo):
     """
@@ -104,54 +101,97 @@ def maquinaEstados (entrada, automata):
     :return estadosFinales - devuelve los estados finales alcanzados por el automata
     """
 
-    # Declaramos el estado actual para saber donde nos encontramos
-    estadoActual = automata["estados"][0]
-    estadosFinales = []  # Almacenar los estados finales visitados
+    ### MANEJO DE LAS TRANSICIONES POR CADENA VACIA (EPSILON) ###
+    # Para manejar las transiciones por cadena vacia o epsilon, definiremos la siguiente funcion auxiliar
+    def tEpsilon(estados, automata):
+        """
+        Encuentra todos los estados alcanzables a partir de transiciones epsilon (cadena vacía).
+
+        :param estados - es el conjunto de estados (tambien puede ser solo uno) desde donde exploraremos las transiciones
+        :param automata - diccionario de datos que contiene la informacion del automata
+        :return alcanzables - devuelve los estados alcanzables por las transiciones
+        """
+        epsilon = ''  # Cadena vacía representando epsilon
+
+        # Inicialización del conjunto de estados alcanzables con los estados actuales.
+        # También asegura que cada estado sea único (sin duplicados).
+        alcanzables = estados.copy()
+
+        # Inicialización de la lista de nuevos estados para explorar.
+        nuevos = estados.copy()
+
+        # Continúa mientras haya nuevos estados para explorar.
+        while nuevos:
+            # Los nuevos estados se convierten en los estados actuales
+            estadosActuales = nuevos.copy()
+
+            # Limpiamos la variable nuevos para la siguiente iteración
+            nuevos.clear()
+
+            for estado in estadosActuales:
+                if epsilon in automata["tablaTransiciones"].get(estado, {}):
+                    # Si hay una transición epsilon obtenemos el estado destino (o los estados)
+                    destinos = automata["tablaTransiciones"][estado][epsilon]
+                    for destino in destinos:
+                        if destino not in alcanzables:
+                            # Agrega el estado a alcanzables
+                            alcanzables.append(destino)
+                            # Y lo añadimos también en nuevos para posteriormente iterar sobre él
+                            nuevos.append(destino)
+        return alcanzables
+
+    # Declaramos el estado(s) actual(es) para saber donde nos encontramos
+    estadosActuales = automata["estados"][00]
+    estadosActuales = estadosActuales.split(' ')
+    estadosActuales = tEpsilon(estadosActuales, automata) #Aplicamos tEpsilon para ver si existe alguna y añadir el estado
+    estadosFinales = []  # Almacenamos los estados finales visitados
 
     # Iteramos a través de cada carácter en el string de entrada
     for caracter in entrada:
+        estadosSiguientes = []
+        estadosFinalesActuales = [] # variable para imprimir los estados finales actuales
 
-        # Buscamos el próximo estado en la tabla de transiciones
-        if caracter in automata["tablaTransiciones"][estadoActual]:
-            # Obtenemos el próximo estado de la tabla de transiciones
-            estadoSiguiente = automata["tablaTransiciones"][estadoActual][caracter]
-            if(estadoSiguiente == ''):
-                estadoSiguiente = estadoActual
-        else:
-            # Si no se encuentra dentro del diccionario sale del bucle
-            print(f"ERROR: No hay transición desde {estadoActual} con {caracter}")
-            break
+        for estado in estadosActuales:
 
-        # Dividimos el estado siguiente en un array auxiliar para mostrar el saldo
-        auxSiguiente = [char for char in estadoSiguiente]
+            # Para evitar el bloqueo del automata, si un estado no tiene una transicion definida en un caracter (es decir
+            # que entre un caracter y este definido como '') eliminamos el estado de la lista de estados actuales
+            if '' == automata["tablaTransiciones"][estado][caracter]:
+                estadosActuales.remove(estado)
 
-        print(f'Caracter introducido: {caracter}, Estado Actual: {estadoActual}, Estado Siguiente: {estadoSiguiente}')
-        print(f'    Saldo Actualizado: {auxSiguiente[1]}.{auxSiguiente[2]}')
+            # Buscamos el próximo estado en la tabla de transiciones
+            elif caracter in automata["tablaTransiciones"][estado]:
+                # Obtenemos los próximos estados de la tabla de transiciones
+                transiciones = automata["tablaTransiciones"][estado][caracter]
+                # Puede haber múltiples estados siguientes debido a la naturaleza no determinista del autómata.
+                for transicion in transiciones.split(' '):
+                    estadosSiguientes.append(transicion)
 
-        #Si el estado siguiente tiene un espacio significa que es doble y contiene un estado final
-        #por ejemplo si estamos en el estado q35 y le entra una a transicionamos al estado q30 y nos devuelve qaa 'q30 qaa'
-        if ' ' in estadoSiguiente:
-            # Dividimos la cadena para obtener los estados individuales
-            estados = estadoSiguiente.split(' ')
+            else:
+                # Si no se encuentra dentro del diccionario sale del bucle
+                print(f"ERROR: No hay transición desde {estado} con {caracter}")
 
-            # Teniendo en cuenta que el estado final es el segundo tenemos lo siguiente
-            estadoNoFinal = estados[0]
-            estadoFinal = estados[1]
+        # Aplicamos transiciones epsilon a los estados siguientes para obtener todos los estados alcanzables
+        estadosSiguientes = tEpsilon(estadosSiguientes, automata)
 
-            # Dividimos el estado siguiente en un array auxiliar para mostrar el producto devuelto
-            auxFinal = [char for char in estadoFinal]
-            estadosFinales.append(auxFinal[1].upper()) #Con upper convertimos las minusculas en mayusculas para obtener el producto deseado
-            print(f"    Devolviendo {auxFinal[1].upper()}")
+        # Comprobamos si alguno de los estados siguientes es un estado final
+        esFinal = any(estado in automata['estadosFinales'] for estado in estadosSiguientes)
 
-            # El estado actual se actualiza al estado que no es final
-            estadoActual = estadoNoFinal
+        if esFinal:
+            # Comprobamos si alguno de los estados siguientes es un estado final
+            for estado in estadosSiguientes:
+                if estado in automata['estadosFinales']:
+                    estadosFinales.append(estado)  # Añadimos el estado a la lista solo si es un estado final
+                    estadosFinalesActuales.append(estado)
 
-        else:
-            #Si solo hay un estado lo actualizamos
-            estadoActual = estadoSiguiente
+        # Imprimimos los detalles de la transición.
+        print(f'\nCaracter introducido: {caracter}')
+        print(f'    Estado(s) Actual(es): {estadosActuales}')
+        print(f'    Estado(s) Siguiente(s): {estadosSiguientes}')
+        if esFinal:
+            print(f'    Devolviendo {estadosFinalesActuales}')
 
-        #Introducimos una espera de un segundo
-        time.sleep(1)
+        # Actualizamos los estados actuales para la próxima iteración.
+        estadosActuales = estadosSiguientes
 
     return estadosFinales
 
