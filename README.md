@@ -72,6 +72,15 @@ If an error occurs, such as an undefined transition, the program will print a co
 
 Note: This script is designed for automata specifically defined with the expected structure in 'archivo.txt'. Ensure your automaton is correctly defined as per the script's requirements.
 
+## 🔄 Using JFLAP with `.jff` Files
+
+The automaton can also be represented and visualized using JFLAP. If you have a `.jff` file describing the automaton:
+
+1. Open the `.jff` file with JFLAP, which is a popular tool for visualizing and experimenting with automata.
+2. JFLAP will allow you to see the state machine graphically and interact with it in various ways, enhancing your understanding of its operation.
+
+JFLAP can be a valuable tool for testing and validating the design of your automaton before implementing it in code. For more information and to download JFLAP, visit [the JFLAP website](http://www.jflap.org/).
+
 # 👏 Credits
 
 This project was created by Pablo Seijo as part of the Automata Theory and Formal Languages course at ETSE (University of Santiago de Compostela).
