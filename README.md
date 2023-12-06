@@ -1,78 +1,77 @@
-# Maquina expendedora a partir de un automata de estados
+# 🎰 State Machine-Based Vending Machine Project
 
-Este proyecto consiste en la creacion de una maquina de estados para aplicar su funcionamiento a una maquina expendedora la cual tendra tres productos:
+This project involves the creation of a state machine to simulate the operation of a vending machine, which will have three products:
 
-| Producto | Precio |
-|----------|--------|
-| A        | 0,50€  |
-| B        | 1,00€  |
-| C        | 2,00€  |
+| Product | Price |
+|---------|-------|
+| A       | €0.50 |
+| B       | €1.00 |
+| C       | €2.00 |
 
-Se aceptarán únicamente monedas de 0,50€, 1€ y 2€, hasta un importe máximode 3,50€. La máquina dispone de 4 botones (A, B, C, uno por producto, y D,para devolución del saldo pendiente). La máquina permitirá realizar varias transacciones mientras exista saldo suficiente. El saldo pendiente se devolverá únicamente al pulsar el botón de devolución.
+Only coins of €0.50, €1, and €2 are accepted, up to a maximum amount of €3.50. The machine has 4 buttons (A, B, C, one for each product, and D for returning the remaining balance). The machine will allow multiple transactions as long as there is sufficient balance. The remaining balance will only be returned when the return button is pressed.
 
-# Funcionalidades
+## 🌟 Features
 
-El proyecto incluirá las siguientes funcionalidades:
-  - Aceptar las entradas por teclado: simulará la introducción de monedas y
-    la pulsación de botones, mediante una cadena de caracteres.
-      - Visualizar el comportamiento del autómata paso a paso,
-        indicando el/los estado/s en que se encuentra en cada momento
-  -  El estado del AF siempre indicará el saldo disponible. Además, en algunos casos el AF podrá estar al mismo tiempo en un estado final que indique el producto que se va a expedir o bien la “acción de devolución”.
+The project will include the following features:
+  - Accept keyboard inputs: simulating the insertion of coins and pressing buttons through a character string.
+    - Visualize the behavior of the state machine step by step, indicating the state(s) it is in at each moment.
+  - The state of the state machine (AF) will always indicate the available balance. In some cases, the AF can simultaneously be in a final state indicating the product to be dispensed or the "return action".
 
-# Uso
-INSTRUCCIONES PARA EJECUTAR EL CÓDIGO DEL AUTÓMATA
+## 🚀 Usage
+**INSTRUCTIONS FOR EXECUTING THE STATE MACHINE CODE**
 
-1. Preparar el entorno:
-   Asegúrate de tener Python instalado en tu sistema. Puedes descargarlo y encontrar instrucciones de instalación en https://www.python.org/.
+1. **Prepare the Environment:**
+   Make sure Python is installed on your system. You can download it and find installation instructions at [https://www.python.org/](https://www.python.org/).
 
-2. Preparar el archivo de autómata:
+2. **Prepare the Automaton File:**
    
-  La definición del autómata (alfabeto, conjunto de estados, función de transición, estado inicial y conjunto de estados finales) deberá leerse de un fichero de texto, por lo que habra que pasarle el automata de     la siguiente manera a traves de un txt.
+   The definition of the automaton (alphabet, set of states, transition function, initial state, and set of final states) must be read from a text file. The automaton must be passed in the following format through a `.txt` file.
 
-  Formato obligatorio del fichero:
+   **Mandatory File Format:**
+
   ```
-  #número total de estados estado1 estado2 …
-  #número de estados finales estadoFinal1 estadoFinal2 …
-  #número total de símbolos del alfabeto simbolo1 simbolo2 … símbolo n
-  --TABLA DE TRANSICIONES--
-  TANTAS FILAS COMO ESTADOS
-  TANTAS COLUMNAS COMO SÍMBOLOS DEL ALFABETO + 1 (cadena vacía).
-  Cada columna finaliza con el símbolo #
+  #total number of states state1 state2 …
+  #number of final states finalState1 finalState2 …
+  #total number of alphabet symbols symbol1 symbol2 … symbol n
+  --TRANSITION TABLE--
+  AS MANY ROWS AS STATES
+  AS MANY COLUMNS AS ALPHABET SYMBOLS + 1 (empty string).
+  Each column ends with the symbol #
   ```
 
-  Ejemplo:
+  **Example:**
   ```
   #4 q00 q10 q20 qaa
   #1 qaa
   #3 1 2 a
-  --TABLA DE TRANSICIONES—
+  --TRANSITION TABLE—
   q10 # q20 # # q10 q20 qaa #
   ```
 
-3. Ejecutar el script:
-   Abre un terminal o línea de comandos.
-   Navega hasta el directorio que contiene el script y el archivo 'archivo.txt'.
-   Ejecuta el comando: python MaquinaExpendedora.py.
+3. **Execute the Script:**
+Open a terminal or command line.
+Navigate to the directory containing the script and the 'archivo.txt' file.
+Run the command: `python VendingMachine.py`.
 
-4. Usar el programa:
-   Una vez que el script esté en ejecución, se te pedirá que introduzcas una cadena de entrada.
-   Introduce la cadena de entrada que desees que el autómata procese.
-   El programa ejecutará el autómata basado en la cadena proporcionada y mostrará los estados finales alcanzados.
+4. **Using the Program:**
+Once the script is running, you will be prompted to enter an input string.
+Enter the input string you want the automaton to process.
+The program will run the automaton based on the provided string and display the reached final states.
 
-   ## Ejemplo de funcionamiento
+## Example of Operation
 
-   Para la cadena de entrada “152ac22bd1c2c”, el funcionamiento del AF será:
+For the input string “152ac22bd1c2c”, the operation of the AF will be:
 
-   | Entrada |   1   |   5   |   2   |   a   |   c   |   2   |   2   |   b   |   d   |   1   |   c   |   2   |   c   |
-   |---------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
-   | Estados | {q00} | {q10} | {q15} | {q35} | {q30, qaa} | {q10, qcc} | {q30} | {q30} | {q20, qbb} | {q00, qdd} | {q10} | {q10} | {q30} | {q10, qcc} |
+| Input  |   1   |   5   |   2   |   a   |   c   |   2   |   2   |   b   |   d   |   1   |   c   |   2   |   c   |
+|--------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+| States | {q00} | {q10} | {q15} | {q35} | {q30, qaa} | {q10, qcc} | {q30} | {q30} | {q20, qbb} | {q00, qdd} | {q10} | {q10} | {q30} | {q10, qcc} |
 
-5. Interpretar la salida:
-   El programa imprimirá los estados finales alcanzados después de procesar la cadena de entrada a través del autómata.
-   Si se encuentra un error, como una transición no definida, el programa imprimirá un mensaje de error correspondiente.
+5. **Interpreting the Output:**
+The program will print the final states reached after processing the input string through the automaton.
+If an error occurs, such as an undefined transition, the program will print a corresponding error message.
 
-Nota: Este script está diseñado para autómatas definidos específicamente con la estructura esperada en 'archivo.txt'. Asegúrate de que tu autómata esté definido correctamente según los requisitos del script.
+Note: This script is designed for automata specifically defined with the expected structure in 'archivo.txt'. Ensure your automaton is correctly defined as per the script's requirements.
 
-# Créditos
+# 👏 Credits
 
-Este proyecto fue creado por Pablo Seijo como parte de la asignatura Teoria de Automatas y Lenguajes Formales en la ETSE (USC)
+This project was created by Pablo Seijo as part of the Automata Theory and Formal Languages course at ETSE (University of Santiago de Compostela).
